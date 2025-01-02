@@ -1,6 +1,6 @@
-import { User } from "../models/user.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { User } from '../models/user.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 // Register Controller
 export const register = async (req, res) => {
@@ -11,7 +11,7 @@ export const register = async (req, res) => {
     if (!fullName || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: 'All fields are required',
       });
     }
 
@@ -20,11 +20,10 @@ export const register = async (req, res) => {
     if (existingUser) {
       return res.status(409).json({
         success: false,
-        message: "Email ID is already registered",
+        message: 'Email ID is already registered',
       });
     }
 
-    
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new user
@@ -36,14 +35,18 @@ export const register = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "Account created successfully",
-      data: { userId: newUser._id, fullName: newUser.fullName, email: newUser.email },
+      message: 'Account created successfully',
+      data: {
+        userId: newUser._id,
+        fullName: newUser.fullName,
+        email: newUser.email,
+      },
     });
   } catch (error) {
-    console.error("Error in register:", error);
+    console.error('Error in register:', error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -57,7 +60,7 @@ export const login = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "All fields are necessary",
+        message: 'All fields are necessary',
       });
     }
 
@@ -66,7 +69,7 @@ export const login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Incorrect email or password",
+        message: 'Incorrect email or password',
       });
     }
 
@@ -75,21 +78,21 @@ export const login = async (req, res) => {
     if (!isPasswordMatch) {
       return res.status(401).json({
         success: false,
-        message: "Incorrect email or password",
+        message: 'Incorrect email or password',
       });
     }
 
     // Generate JWT token
     const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
-      expiresIn: "1d",
+      expiresIn: '1d',
     });
 
     return res
       .status(200)
-      .cookie("token", token, {
+      .cookie('token', token, {
         httpOnly: true,
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       })
       .json({
@@ -97,10 +100,10 @@ export const login = async (req, res) => {
         message: `Welcome back, ${user.fullName}`,
       });
   } catch (error) {
-    console.error("Error in login:", error);
+    console.error('Error in login:', error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };
@@ -108,15 +111,15 @@ export const login = async (req, res) => {
 // Logout Controller
 export const logout = async (req, res) => {
   try {
-    return res.status(200).cookie("token", "", { maxAge: 0 }).json({
+    return res.status(200).cookie('token', '', { maxAge: 0 }).json({
       success: true,
-      message: "User logged out successfully",
+      message: 'User logged out successfully',
     });
   } catch (error) {
-    console.error("Error in logout:", error);
+    console.error('Error in logout:', error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 };

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const todoSchema = new mongoose.Schema({
   title: {
@@ -9,6 +9,10 @@ const todoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  createdBy: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+  },
 });
 
-export const Todo = mongoose.model("Todo", todoSchema);
+export const Todo = mongoose.model('Todo', todoSchema);
